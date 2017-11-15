@@ -1,5 +1,6 @@
 import React from 'react'
 import { renderToString } from 'react-dom/server'
+import { ServerStyleSheet } from 'styled-components'
 import xxhash from 'xxhashjs'
 import { cloneDeep } from 'lodash'
 
@@ -79,18 +80,22 @@ export function render (ctx) {
     return
   }
 
+  const sheet = new ServerStyleSheet()
+
   // Else it is a full SSR: render the dom to string.
   // Use the template and pass to it the component
   // to render
-  const content = renderToString(
+  const content = renderToString(sheet.collectStyles(
     <HtmlDocument state={state}>
       {ctx.state.context.container.component &&
         <ctx.state.context.container.component {...ctx.state.context.container.props} />}
-    </HtmlDocument>
+    </HtmlDocument>)
   )
 
+  const styleTags = sheet.getStyleTags()
+
   ctx.type = 'html'
-  ctx.body = `<!DOCTYPE html>\n${content}`
+  ctx.body = `<!DOCTYPE html>\n${content.replace('</head>', `${styleTags}</head>`)}`
 }
 
 /**
