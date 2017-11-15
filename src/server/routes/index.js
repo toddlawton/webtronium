@@ -1,5 +1,6 @@
 import Router from 'koa-router'
 
+import aboutController from '../controllers/about.controller'
 import homeController from '../controllers/home.controller'
 import docsController from '../controllers/docs.controller'
 import demoController from '../controllers/demo.controller'
@@ -8,6 +9,9 @@ const router = Router()
 
 // Home page
 router.get('/', homeController.index)
+
+// About
+router.get('/about', aboutController.index)
 
 // Docs
 router.get('/docs/:section?', docsController.index)
